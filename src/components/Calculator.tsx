@@ -55,7 +55,7 @@ const Calculator = () => {
   const relativeDateString = formatRelative(
     lastResetDate,
     new Date().getTime(),
-    locale
+    { locale }
   );
 
   const [[timeUntil, timeUnit, timeUnits], setTimeRemaining] = useState<
