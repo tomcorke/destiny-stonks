@@ -1,0 +1,52 @@
+.Calculator {
+  text-align: center;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: stretch;
+
+  h1 {
+    width: 100%;
+    margin: 0;
+    margin-bottom: 0.5em;
+    padding: 0;
+    font-size: 80px;
+
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      margin-right: 0.2em;
+    }
+  }
+}
+
+.input[type="text"] {
+  border: 0;
+  border-bottom: #aaa 1px solid;
+  border-radius: 10px 10px 0 0;
+  background: rgba(black, 0.02);
+  width: 100%;
+  font-size: 40px;
+  padding: 10px;
+  margin-top: 1em;
+  text-align: center;
+}
+
+.spacedElements {
+  & > * {
+    margin-bottom: 18px;
+  }
+}
+
+.resetList {
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    li {
+      margin-bottom: 0.5em;
+    }
+  }
+}
