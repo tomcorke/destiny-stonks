@@ -49,7 +49,6 @@ const getResetsUntil = (date: Date) => {
 };
 
 const locale = getLocale();
-console.log(locale);
 
 const Calculator = () => {
   const lastResetDate = new Date(Date.UTC(2020, 2, 10, 17, 0, 0, 0));
