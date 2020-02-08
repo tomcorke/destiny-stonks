@@ -3,23 +3,6 @@
   display: flex;
   flex-flow: column nowrap;
   align-items: stretch;
-
-  h1 {
-    width: 100%;
-    margin: 0;
-    margin-bottom: 0.5em;
-    padding: 0;
-    font-size: 80px;
-
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    align-items: center;
-
-    img {
-      margin-right: 0.2em;
-    }
-  }
 }
 
 .input[type="text"] {
@@ -37,6 +20,11 @@
 .spacedElements {
   & > * {
     margin-bottom: 18px;
+  }
+  pre {
+    text-align: left;
+    background: #111;
+    padding: 0.5em;
   }
 }
 

@@ -6,8 +6,7 @@ import numeral from "numeral";
 import * as locales from "date-fns/locale";
 
 import STYLES from "./Calculator.module.scss";
-
-import fractalineImage from "../images/fractaline_trans_2.png";
+import { DonationData } from "../types";
 
 const getLocale = () => {
   const userLocale = navigator.language;
@@ -50,7 +49,12 @@ const getResetsUntil = (date: Date) => {
 
 const locale = getLocale();
 
-const Calculator = () => {
+interface CalculatorProps {
+  isAuthed: boolean;
+  donationData?: DonationData | null;
+}
+
+const Calculator = ({ isAuthed, donationData }: CalculatorProps) => {
   const lastResetDate = new Date(Date.UTC(2020, 2, 10, 17, 0, 0, 0));
   const relativeDateString = formatRelative(
     lastResetDate,
@@ -90,7 +94,7 @@ const Calculator = () => {
   const resetList: (JSX.Element | string)[] = [];
   if (resetsRemaining.length > 0) {
     const currentReset = (
-      <li>
+      <li key="current">
         Current reset ends: {resetsRemaining[0].toLocaleDateString()} -{" "}
         {shouldDonate ? "DONATE!" : "INVEST!"}
       </li>
@@ -102,7 +106,7 @@ const Calculator = () => {
       const resetStart = resetsRemaining[i];
       const resetEnd = addDays(resetStart, 7);
       resetList.push(
-        <li>
+        <li key={resetEnd.toISOString()}>
           {resetStart.toLocaleDateString()} - {resetEnd.toLocaleDateString()} -{" "}
           {resetsRemaining.length - i <= DONATE_RESETS ? "DONATE!" : "INVEST!"}
         </li>
@@ -112,12 +116,13 @@ const Calculator = () => {
 
   return (
     <div className={STYLES.Calculator}>
-      <h1>
-        <img alt="Fractaline stonks" src={fractalineImage} />
-        Fractaline Stonks
-      </h1>
       <div className={STYLES.spacedElements}>
-        {/*<input type="text" className={STYLES.input} placeholder="stonks" />*/}
+        {donationData ? (
+          <pre>{JSON.stringify(donationData, null, 2)}</pre>
+        ) : isAuthed ? (
+          <div>Fetching donation data...</div>
+        ) : null}
+
         <div>Season of Dawn ends: {relativeDateString}</div>
         {shouldDonate ? (
           <div>
