@@ -7,6 +7,9 @@ import * as locales from "date-fns/locale";
 
 import STYLES from "./Calculator.module.scss";
 import { DonationData } from "../types";
+import { ResetPanel } from "./ResetPanel";
+import { ObeliskDisplay } from "./ObeliskDisplay";
+import { TowerDisplay } from "./TowerDisplay";
 
 const getLocale = () => {
   const userLocale = navigator.language;
@@ -17,33 +20,39 @@ const getLocale = () => {
   return locales.enUS;
 };
 
-const secondsUntil = (date: Date) => {
-  const now = new Date().getTime();
-  return Math.floor(Math.max(0, date.getTime() - now) / 1000);
+const secondsUntil = (fromDate: Date, toDate: Date) => {
+  const fromTime = fromDate.getTime();
+  return Math.floor(Math.max(0, toDate.getTime() - fromTime) / 1000);
 };
-const minutesUntil = (date: Date) => Math.floor(secondsUntil(date) / 60);
-const hoursUntil = (date: Date) => Math.floor(minutesUntil(date) / 60);
-const daysUntil = (date: Date) => Math.floor(hoursUntil(date) / 24);
-const weeksUntil = (date: Date) => Math.floor(daysUntil(date) / 7);
+const minutesUntil = (fromDate: Date, toDate: Date) =>
+  Math.floor(secondsUntil(fromDate, toDate) / 60);
+const hoursUntil = (fromDate: Date, toDate: Date) =>
+  Math.floor(minutesUntil(fromDate, toDate) / 60);
+const daysUntil = (fromDate: Date, toDate: Date) =>
+  Math.floor(hoursUntil(fromDate, toDate) / 24);
+const weeksUntil = (fromDate: Date, toDate: Date) =>
+  Math.floor(daysUntil(fromDate, toDate) / 7);
 
-const getResetsUntil = (date: Date) => {
-  const now = new Date();
-  const day = now.getUTCDay();
+const getResetsUntil = (fromDate: Date, toDate: Date) => {
+  const day = fromDate.getUTCDay();
   const results: Date[] = [];
-  let d = now;
+  let d = fromDate;
   if (day < 2) {
-    d = addDays(d, 7);
+    d = addDays(d, 2 - day);
+  } else {
+    d = addDays(d, 7 - day + 2);
   }
-  d = addDays(d, 2 - day);
+  console.log(d.toLocaleDateString());
   d.setUTCHours(17);
   d.setUTCMinutes(0);
   d.setUTCSeconds(0);
-  while (d < date) {
-    d = addDays(d, 7);
-    if (d < date) {
+  while (d < toDate) {
+    if (d < toDate) {
       results.push(d);
     }
+    d = addDays(d, 7);
   }
+  console.log(results);
   return results;
 };
 
@@ -52,77 +61,99 @@ const locale = getLocale();
 interface CalculatorProps {
   isAuthed: boolean;
   donationData?: DonationData | null;
+  fromDate: Date;
 }
 
-const Calculator = ({ isAuthed, donationData }: CalculatorProps) => {
+export const Calculator = ({
+  isAuthed,
+  donationData,
+  fromDate,
+}: CalculatorProps) => {
   const lastResetDate = new Date(Date.UTC(2020, 2, 10, 17, 0, 0, 0));
-  const relativeDateString = formatRelative(
-    lastResetDate,
-    new Date().getTime(),
-    { locale }
-  );
+  const relativeDateString = formatRelative(lastResetDate, fromDate.getTime(), {
+    locale,
+  });
 
   const [[timeUntil, timeUnit, timeUnits], setTimeRemaining] = useState<
     [number, string, string]
   >([0, "Day", "Days"]);
   useInterval(() => {
-    const weeks = weeksUntil(lastResetDate);
+    const weeks = weeksUntil(fromDate, lastResetDate);
     if (weeks > 0) {
       return setTimeRemaining([weeks, "Week", "Weeks"]);
     }
-    const days = daysUntil(lastResetDate);
+    const days = daysUntil(fromDate, lastResetDate);
     if (days > 0) {
       return setTimeRemaining([days, "Day", "Days"]);
     }
-    const hours = hoursUntil(lastResetDate);
+    const hours = hoursUntil(fromDate, lastResetDate);
     if (hours > 0) {
       return setTimeRemaining([hours, "Hour", "Hours"]);
     }
-    const minutes = minutesUntil(lastResetDate);
+    const minutes = minutesUntil(fromDate, lastResetDate);
     if (minutes > 0) {
       return setTimeRemaining([minutes, "Minute", "Minutes"]);
     }
-    const seconds = secondsUntil(lastResetDate);
+    const seconds = secondsUntil(fromDate, lastResetDate);
     return setTimeRemaining([seconds, "Second", "Seconds"]);
   }, 1000);
 
-  const resetsRemaining = getResetsUntil(lastResetDate);
+  const resetsRemaining = getResetsUntil(fromDate, lastResetDate);
 
   const DONATE_RESETS = 3;
-  const shouldDonate = resetsRemaining.length <= DONATE_RESETS;
+  const shouldDonate = resetsRemaining.length + 1 <= DONATE_RESETS;
 
   const resetList: (JSX.Element | string)[] = [];
   if (resetsRemaining.length > 0) {
     const currentReset = (
-      <li key="current">
-        Current reset ends: {resetsRemaining[0].toLocaleDateString()} -{" "}
-        {shouldDonate ? "DONATE!" : "INVEST!"}
-      </li>
+      <ResetPanel
+        key="current"
+        header="This week"
+        content={`${shouldDonate ? "DONATE!" : "INVEST!"}`}
+      />
     );
     resetList.push(currentReset);
   }
   if (resetsRemaining.length > 1) {
     for (let i = 0; i < resetsRemaining.length; i++) {
       const resetStart = resetsRemaining[i];
-      const resetEnd = addDays(resetStart, 7);
+      // const resetEnd = addDays(resetStart, 7);
       resetList.push(
-        <li key={resetEnd.toISOString()}>
-          {resetStart.toLocaleDateString()} - {resetEnd.toLocaleDateString()} -{" "}
-          {resetsRemaining.length - i <= DONATE_RESETS ? "DONATE!" : "INVEST!"}
-        </li>
+        <ResetPanel
+          key={resetStart.toISOString()}
+          header={`Week beginning ${resetStart.toLocaleDateString()}`}
+          content={`${
+            resetsRemaining.length - i <= DONATE_RESETS ? "DONATE!" : "INVEST!"
+          }`}
+        />
       );
     }
   }
+  resetList.push(
+    <ResetPanel
+      key="after"
+      header="After that..."
+      content="Season of Dawn is over!"
+    />
+  );
 
   return (
     <div className={STYLES.Calculator}>
       <div className={STYLES.spacedElements}>
         {donationData ? (
-          <pre>{JSON.stringify(donationData, null, 2)}</pre>
+          /* <pre>{JSON.stringify(donationData, null, 2)}</pre>*/
+          <>
+            <ObeliskDisplay obeliskLevels={donationData.obeliskLevels} />
+            <TowerDisplay
+              resonancePower={donationData.resonancePower}
+              donated={donationData.donatedFractaline}
+              collected={donationData.hasCollectedTowerFractaline}
+            />
+          </>
         ) : isAuthed ? (
           <div>Fetching donation data...</div>
         ) : null}
-
+        <div>Current date: {fromDate.toLocaleDateString()}</div>
         <div>Season of Dawn ends: {relativeDateString}</div>
         {shouldDonate ? (
           <div>
@@ -135,12 +166,8 @@ const Calculator = ({ isAuthed, donationData }: CalculatorProps) => {
             resets left to invest for optimal fractaline
           </div>
         )}
-        <div className={STYLES.resetList}>
-          <ul>{resetList}</ul>
-        </div>
+        <div className={STYLES.resetList}>{resetList}</div>
       </div>
     </div>
   );
 };
-
-export default Calculator;

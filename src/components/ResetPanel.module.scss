@@ -1,0 +1,71 @@
+$panel-spacing: 10px;
+$link-size: 40px;
+
+.ResetPanel {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 800px;
+  border: 1px solid cyan;
+  border-radius: 3px;
+  padding: 1em;
+  box-shadow: 0 0 6px 2px black, 0 0 10px 0 cyan;
+  margin-bottom: $panel-spacing;
+
+  position: relative;
+
+  &:nth-of-type(odd) {
+    &:after {
+      content: "";
+      position: absolute;
+      top: calc(100% - (#{$link-size - $panel-spacing} / 2));
+      left: calc(100% - (#{$link-size - $panel-spacing} / 2));
+      width: calc(#{$link-size});
+      height: calc(#{$link-size});
+      border: 2px solid white;
+      border-radius: 50%;
+      border-left-color: transparent;
+      border-bottom-color: transparent;
+      transform: rotate(45deg);
+      display: block;
+    }
+  }
+
+  &:nth-of-type(even) {
+    &:after {
+      content: "";
+      position: absolute;
+      top: calc(100% - (#{$link-size - $panel-spacing} / 2));
+      right: calc(100% - (#{$link-size - $panel-spacing} / 2));
+      width: calc(#{$link-size});
+      height: calc(#{$link-size});
+      border: 2px solid white;
+      border-radius: 50%;
+      border-right-color: transparent;
+      border-bottom-color: transparent;
+      transform: rotate(-45deg);
+      display: block;
+    }
+  }
+
+  &:last-of-type {
+    margin-bottom: 0;
+    &:after {
+      display: none;
+    }
+  }
+}
+
+.header {
+  text-transform: uppercase;
+  position: absolute;
+  left: 5px;
+  top: -5px;
+  transform: rotate(-2deg);
+  font-size: 25px;
+  text-shadow: 0 0 5px black;
+  font-weight: bold;
+}
+
+.content {
+  margin-top: 20px;
+}

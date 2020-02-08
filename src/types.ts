@@ -5,6 +5,7 @@ export interface DonationData {
     nessus: number;
     tangledShore: number;
   };
+  resonancePower: number;
   donatedFractaline: number;
   fractalineInInventory: number;
   lightInfusedFractalineInInventory: number;

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import throttle from "lodash/throttle";
 
+import { Calculator } from "./components/Calculator";
+
 import STYLES from "./App.module.scss";
-import Calculator from "./components/Calculator";
 
 import {
   auth,
@@ -31,7 +32,11 @@ import {
   DONATED_FRACTALINE_PROGRESSION_HASH,
   FRACTALINE_INVENTORY_ITEM_HASH,
   LIGHT_INFUSED_FRACTALINE_INVENTORY_ITEM_HASH,
+  RESONANCE_POWER_PROGRESION_HASH,
 } from "./constants";
+
+import "normalize.css";
+import "./index.css";
 
 const doAuth = throttle(
   (
@@ -57,6 +62,12 @@ const doAuth = throttle(
   },
   100
 );
+
+export const AppWrapper = ({
+  children,
+}: {
+  children: JSX.Element | JSX.Element[];
+}) => <div className={STYLES.App}>{children}</div>;
 
 const App = () => {
   const [isAuthed, setIsAuthed] = useState(hasValidAuth());
@@ -143,6 +154,9 @@ const App = () => {
         const donationProgress = findProgression(
           DONATED_FRACTALINE_PROGRESSION_HASH
         );
+        const resonancePowerProgress = findProgression(
+          RESONANCE_POWER_PROGRESION_HASH
+        );
         const inventoryFractaline = findInventory(
           FRACTALINE_INVENTORY_ITEM_HASH
         );
@@ -158,6 +172,7 @@ const App = () => {
             tangledShore: tangledProgress.level,
           },
           donatedFractaline: donationProgress.level,
+          resonancePower: resonancePowerProgress.level,
           fractalineInInventory: inventoryFractaline?.quantity || 0,
           lightInfusedFractalineInInventory:
             lightInfusedInventoryFractaline?.quantity || 0,
@@ -174,8 +189,10 @@ const App = () => {
     setDonationData(undefined);
   });
 
+  const [nowDate] = useState(new Date());
+
   return (
-    <div className={STYLES.App}>
+    <AppWrapper>
       <Title />
       <div className={STYLES.auth}>
         {isAuthed && selectedMembership ? (
@@ -192,8 +209,12 @@ const App = () => {
           </button>
         ) : null}
       </div>
-      <Calculator isAuthed={isAuthed} donationData={donationData} />
-    </div>
+      <Calculator
+        isAuthed={isAuthed}
+        donationData={donationData}
+        fromDate={nowDate}
+      />
+    </AppWrapper>
   );
 };
 
