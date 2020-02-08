@@ -14,12 +14,7 @@ import {
 } from "./services/bungie-auth";
 import { EVENTS, useEvent } from "./services/events";
 import { Title } from "./components/Title";
-import {
-  ManifestData,
-  getManifest,
-  BungieSystemDisabledError,
-  getFullProfile,
-} from "./services/bungie-api";
+import { getFullProfile } from "./services/bungie-api";
 import {
   DestinyProfileResponse,
   DestinyCharacterProgressionComponent,
