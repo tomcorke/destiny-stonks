@@ -12,7 +12,7 @@ export const display = () => (
       obeliskLevels: { edz: 11, nessus: 62, mars: 29, tangledShore: 11 },
       donatedFractaline: 5400,
       fractalineInInventory: 750,
-      hasCollectedTowerFractaline: false,
+      hasCollectedTowerFractaline: true,
       lightInfusedFractalineInInventory: 24,
       resonancePower: 11500,
     }}

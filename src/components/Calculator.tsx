@@ -101,8 +101,16 @@ export const Calculator = ({
   const DONATE_RESETS = 3;
   const shouldDonate = resetsRemaining.length + 1 <= DONATE_RESETS;
 
-  const calculateInvestment = (data: DonationData): DonationData => {
-    const addRanks = Math.floor(data.resonancePower / 200);
+  const calculateInvestment = (
+    data: DonationData,
+    checkCollected = false
+  ): DonationData => {
+    let addRanks = Math.floor(data.resonancePower / 200);
+    if (checkCollected) {
+      if (data.hasCollectedTowerFractaline) {
+        addRanks = Math.floor(data.fractalineInInventory / 200);
+      }
+    }
     const totalObeliskLevel =
       data.obeliskLevels.edz +
       data.obeliskLevels.mars +
@@ -125,7 +133,13 @@ export const Calculator = ({
     };
   };
 
-  const calculateDonation = (data: DonationData): DonationData => {
+  const calculateDonation = (
+    data: DonationData,
+    checkCollected = false
+  ): DonationData => {
+    if (checkCollected && data.hasCollectedTowerFractaline) {
+      return data;
+    }
     return {
       ...data,
       donatedFractaline: data.donatedFractaline + data.resonancePower,
@@ -143,6 +157,13 @@ export const Calculator = ({
         <div>Total obelisk level: {totalObeliskLevel}</div>
         <div>Tower resonance: {data.resonancePower}</div>
         <div>Fractaline donated: {data.donatedFractaline}</div>
+        {data.hasCollectedTowerFractaline ? (
+          <div>
+            You&apos;ve already collected your tower fractaline this week, but
+            have {data.fractalineInInventory} fractaline in your inventory to
+            invest!
+          </div>
+        ) : null}
       </>
     );
   };
@@ -160,7 +181,9 @@ export const Calculator = ({
       />
     );
     resetList.push(currentReset);
-    data = shouldDonate ? calculateDonation(data) : calculateInvestment(data);
+    data = shouldDonate
+      ? calculateDonation(data, true)
+      : calculateInvestment(data, true);
   }
 
   if (resetsRemaining.length > 1) {
@@ -181,6 +204,14 @@ export const Calculator = ({
         : calculateInvestment(data);
     }
   }
+
+  resetList.push(
+    <ResetPanel
+      key="end"
+      header="End of Season of Dawn"
+      content={`Total fractaline donated: ${data.donatedFractaline}`}
+    />
+  );
 
   return (
     <div className={STYLES.Calculator}>
