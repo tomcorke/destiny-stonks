@@ -63,40 +63,6 @@ const doAuth = throttle(
   100
 );
 
-const doGetManifest = throttle(
-  (
-    setBungieSystemDisabled: (value: boolean) => void,
-    setBungieServiceUnavailable: (value: boolean) => void,
-    setManifestData: (value: ManifestData) => void,
-    setManifestError: (value: boolean) => void
-  ) => {
-    (async () => {
-      try {
-        const manifestResult = await getManifest();
-        if (manifestResult.error) {
-          console.error(
-            `Error fetching manifest:`,
-            manifestResult.error.message
-          );
-          setManifestError(true);
-          if (manifestResult.error instanceof BungieSystemDisabledError) {
-            setBungieSystemDisabled(true);
-          }
-          if (manifestResult.error.message === "503") {
-            setBungieServiceUnavailable(true);
-          }
-          return;
-        }
-        setManifestData(manifestResult.manifest);
-      } catch (e) {
-        console.error(e);
-        setManifestError(true);
-      }
-    })();
-  },
-  500
-);
-
 const App = () => {
   const [isAuthed, setIsAuthed] = useState(hasValidAuth());
   const [hasAuthError, setHasAuthError] = useState(false);
@@ -107,45 +73,10 @@ const App = () => {
     doAuth(setIsAuthed, setHasAuthError);
   }, []);
 
-  const [manifestData, setManifestData] = useState<ManifestData | undefined>(
-    undefined
-  );
-  const [hasManifestError, setManifestError] = useState(false);
   const [isBungieSystemDisabled, setBungieSystemDisabled] = useState(false);
   const [isBungieServiceUnavailable, setBungieServiceUnavailable] = useState(
     false
   );
-  const [manifestState, setManifestState] = useState("Unknown");
-  useEvent(EVENTS.MANIFEST_DATA_READY, () => {
-    setManifestError(false);
-    setManifestState("Manifest ready");
-  });
-  const hasManifestData = manifestState === "Manifest ready";
-
-  useEffect(
-    () =>
-      doGetManifest(
-        setBungieSystemDisabled,
-        setBungieServiceUnavailable,
-        setManifestData,
-        setManifestError
-      ),
-    [
-      setBungieSystemDisabled,
-      setBungieServiceUnavailable,
-      setManifestData,
-      setManifestError,
-    ]
-  );
-
-  useEvent(EVENTS.MANIFEST_FETCH_ERROR, () => {
-    doGetManifest(
-      setBungieSystemDisabled,
-      setBungieServiceUnavailable,
-      setManifestData,
-      setManifestError
-    );
-  });
 
   const [profileData, setProfileData] = useState<
     DestinyProfileResponse | undefined
