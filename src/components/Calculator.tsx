@@ -42,7 +42,6 @@ const getResetsUntil = (fromDate: Date, toDate: Date) => {
   } else {
     d = addDays(d, 7 - day + 2);
   }
-  console.log(d.toLocaleDateString());
   d.setUTCHours(17);
   d.setUTCMinutes(0);
   d.setUTCSeconds(0);
@@ -52,7 +51,6 @@ const getResetsUntil = (fromDate: Date, toDate: Date) => {
     }
     d = addDays(d, 7);
   }
-  console.log(results);
   return results;
 };
 
