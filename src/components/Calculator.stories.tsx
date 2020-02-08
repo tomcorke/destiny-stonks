@@ -6,12 +6,12 @@ export default { title: "Calculator", component: Calculator };
 
 export const display = () => (
   <Calculator
-    fromDate={new Date(2020, 1, 2, 0, 0, 0)}
+    fromDate={new Date(2020, 1, 8, 0, 0, 0)}
     isAuthed={true}
     donationData={{
-      obeliskLevels: { edz: 1, nessus: 2, mars: 3, tangledShore: 4 },
+      obeliskLevels: { edz: 11, nessus: 62, mars: 29, tangledShore: 11 },
       donatedFractaline: 5400,
-      fractalineInInventory: 7500,
+      fractalineInInventory: 750,
       hasCollectedTowerFractaline: false,
       lightInfusedFractalineInInventory: 24,
       resonancePower: 11500,

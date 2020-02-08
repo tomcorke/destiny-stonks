@@ -101,39 +101,86 @@ export const Calculator = ({
   const DONATE_RESETS = 3;
   const shouldDonate = resetsRemaining.length + 1 <= DONATE_RESETS;
 
+  const calculateInvestment = (data: DonationData): DonationData => {
+    const addRanks = Math.floor(data.resonancePower / 200);
+    const totalObeliskLevel =
+      data.obeliskLevels.edz +
+      data.obeliskLevels.mars +
+      data.obeliskLevels.nessus +
+      data.obeliskLevels.tangledShore;
+    const newObeliskLevel = totalObeliskLevel + addRanks;
+    const newResonancePower = newObeliskLevel * 100 + 200;
+    return {
+      obeliskLevels: {
+        edz: newObeliskLevel,
+        mars: 0,
+        nessus: 0,
+        tangledShore: 0,
+      },
+      donatedFractaline: data.donatedFractaline,
+      fractalineInInventory: data.fractalineInInventory,
+      lightInfusedFractalineInInventory: data.lightInfusedFractalineInInventory,
+      resonancePower: newResonancePower,
+      hasCollectedTowerFractaline: false,
+    };
+  };
+
+  const calculateDonation = (data: DonationData): DonationData => {
+    return {
+      ...data,
+      donatedFractaline: data.donatedFractaline + data.resonancePower,
+    };
+  };
+
+  const summaryDisplay = (data: DonationData) => {
+    const totalObeliskLevel =
+      data.obeliskLevels.edz +
+      data.obeliskLevels.mars +
+      data.obeliskLevels.nessus +
+      data.obeliskLevels.tangledShore;
+    return (
+      <>
+        <div>Total obelisk level: {totalObeliskLevel}</div>
+        <div>Tower resonance: {data.resonancePower}</div>
+        <div>Fractaline donated: {data.donatedFractaline}</div>
+      </>
+    );
+  };
+
+  let data = donationData;
+
   const resetList: (JSX.Element | string)[] = [];
   if (resetsRemaining.length > 0) {
     const currentReset = (
       <ResetPanel
         key="current"
         header="This week"
-        content={`${shouldDonate ? "DONATE!" : "INVEST!"}`}
+        content={summaryDisplay(donationData)}
+        suggestedAction={shouldDonate ? "donate" : "invest"}
       />
     );
     resetList.push(currentReset);
+    data = shouldDonate ? calculateDonation(data) : calculateInvestment(data);
   }
+
   if (resetsRemaining.length > 1) {
     for (let i = 0; i < resetsRemaining.length; i++) {
       const resetStart = resetsRemaining[i];
       // const resetEnd = addDays(resetStart, 7);
+      const donateThisWeek = resetsRemaining.length - i <= DONATE_RESETS;
       resetList.push(
         <ResetPanel
           key={resetStart.toISOString()}
           header={`Week beginning ${resetStart.toLocaleDateString()}`}
-          content={`${
-            resetsRemaining.length - i <= DONATE_RESETS ? "DONATE!" : "INVEST!"
-          }`}
+          content={summaryDisplay(data)}
+          suggestedAction={donateThisWeek ? "donate" : "invest"}
         />
       );
+      data = donateThisWeek
+        ? calculateDonation(data)
+        : calculateInvestment(data);
     }
   }
-  resetList.push(
-    <ResetPanel
-      key="after"
-      header="After that..."
-      content="Season of Dawn is over!"
-    />
-  );
 
   return (
     <div className={STYLES.Calculator}>
