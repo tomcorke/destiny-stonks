@@ -35,7 +35,7 @@ export const TowerDisplay = ({}: TowerDisplayProps) => {
       <div className={STYLES.header}>Tower</div>
       <Item
         value={11500}
-        label="Tower resonance"
+        label="Tower Resonance"
         iconPath={towerObeliskImage}
       />
       <Item
