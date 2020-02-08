@@ -24,10 +24,10 @@ import {
 } from "bungie-api-ts/destiny2";
 import { DonationData } from "./types";
 import {
-  EDZ_OBELISK_PROGRESSION_HASH,
-  MARS_OBELISK_PROGRESSION_HASH,
-  NESSUS_OBELISK_PROGRESSION_HASH,
-  TANGLED_SHORE_OBELISK_PROGRESSION_HASH,
+  EDZ_OBELISK_FACTION_HASH,
+  MARS_OBELISK_FACTION_HASH,
+  NESSUS_OBELISK_FACTION_HASH,
+  TANGLED_SHORE_OBELISK_FACTION_HASH,
   DONATED_FRACTALINE_PROGRESSION_HASH,
   FRACTALINE_INVENTORY_ITEM_HASH,
   LIGHT_INFUSED_FRACTALINE_INVENTORY_ITEM_HASH,
@@ -136,12 +136,10 @@ const App = () => {
       };
 
       try {
-        const edzProgress = findFaction(EDZ_OBELISK_PROGRESSION_HASH);
-        const marsProgress = findFaction(MARS_OBELISK_PROGRESSION_HASH);
-        const nessusProgress = findFaction(NESSUS_OBELISK_PROGRESSION_HASH);
-        const tangledProgress = findFaction(
-          TANGLED_SHORE_OBELISK_PROGRESSION_HASH
-        );
+        const edzProgress = findFaction(EDZ_OBELISK_FACTION_HASH);
+        const marsProgress = findFaction(MARS_OBELISK_FACTION_HASH);
+        const nessusProgress = findFaction(NESSUS_OBELISK_FACTION_HASH);
+        const tangledProgress = findFaction(TANGLED_SHORE_OBELISK_FACTION_HASH);
         const donationProgress = findProgression(
           DONATED_FRACTALINE_PROGRESSION_HASH
         );
