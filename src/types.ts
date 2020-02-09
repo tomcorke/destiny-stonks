@@ -8,6 +8,6 @@ export interface DonationData {
   resonancePower: number;
   donatedFractaline: number;
   fractalineInInventory: number;
-  lightInfusedFractalineInInventory: number;
+  lightFusedFractalineInInventory: number;
   hasCollectedTowerFractaline: boolean;
 }

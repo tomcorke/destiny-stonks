@@ -10,6 +10,6 @@ export const display = () => (
     resonancePower={654321}
     collected={false}
     fractalineInInventory={7500}
-    lightInfusedFractalineInInventory={4}
+    lightFusedFractalineInInventory={4}
   />
 );

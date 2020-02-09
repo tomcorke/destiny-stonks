@@ -5,14 +5,12 @@ import addDays from "date-fns/addDays";
 import numeral from "numeral";
 import * as locales from "date-fns/locale";
 import { Locale } from "date-fns";
-import classnames from "classnames";
 
 import STYLES from "./Calculator.module.scss";
 import { DonationData } from "../types";
 import { ResetPanel } from "./ResetPanel";
 import { ObeliskDisplay } from "./ObeliskDisplay";
 import { TowerDisplay } from "./TowerDisplay";
-import { getFullProfile } from "../services/bungie-api";
 import { CheckPanel } from "./CheckPanel";
 
 const getLocale = () => {
@@ -128,7 +126,7 @@ export const Calculator = ({
     }
     let addRanks = Math.floor(fractalineToUse / 200);
     const remainingFractaline = fractalineToUse - addRanks * 200;
-    addRanks += d.lightInfusedFractalineInInventory;
+    addRanks += d.lightFusedFractalineInInventory;
 
     const totalObeliskLevel = getTotalObeliskLevel(d);
     const newObeliskLevel = totalObeliskLevel + addRanks;
@@ -143,7 +141,7 @@ export const Calculator = ({
         tangledShore: 0,
       },
       fractalineInInventory: remainingFractaline,
-      lightInfusedFractalineInInventory: 0,
+      lightFusedFractalineInInventory: 0,
       resonancePower: newResonancePower,
       hasCollectedTowerFractaline: false,
     };
@@ -155,9 +153,9 @@ export const Calculator = ({
   ): DonationData => {
     const d = clone(data);
     let useResonancePower = d.resonancePower;
-    if (d.lightInfusedFractalineInInventory > 0) {
+    if (d.lightFusedFractalineInInventory > 0) {
       const newObeliskLevel =
-        getTotalObeliskLevel(d) + d.lightInfusedFractalineInInventory;
+        getTotalObeliskLevel(d) + d.lightFusedFractalineInInventory;
       d.resonancePower = getResonancePower(newObeliskLevel);
       if (checkCollected && !d.hasCollectedTowerFractaline) {
         useResonancePower = d.resonancePower;
@@ -179,7 +177,7 @@ export const Calculator = ({
       ...d,
       donatedFractaline: d.donatedFractaline + eligibleFractaline,
       fractalineInInventory: remaining,
-      lightInfusedFractalineInInventory: 0,
+      lightFusedFractalineInInventory: 0,
       hasCollectedTowerFractaline: false,
     };
   };
@@ -246,10 +244,10 @@ export const Calculator = ({
             {numeral(data.fractalineInInventory).format("0,0")}
           </div>
         ) : null}
-        {data.lightInfusedFractalineInInventory > 0 ? (
+        {data.lightFusedFractalineInInventory > 0 ? (
           <div>
-            Light-Infused Fractaline in inventory:{" "}
-            {numeral(data.lightInfusedFractalineInInventory).format("0,0")}
+            Light-Fused Fractaline in inventory:{" "}
+            {numeral(data.lightFusedFractalineInInventory).format("0,0")}
           </div>
         ) : null}
         {data.hasCollectedTowerFractaline ? (
@@ -390,8 +388,8 @@ export const Calculator = ({
               donated={donationData.donatedFractaline}
               collected={donationData.hasCollectedTowerFractaline}
               fractalineInInventory={donationData.fractalineInInventory}
-              lightInfusedFractalineInInventory={
-                donationData.lightInfusedFractalineInInventory
+              lightFusedFractalineInInventory={
+                donationData.lightFusedFractalineInInventory
               }
             />
           </>

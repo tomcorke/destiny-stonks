@@ -35,7 +35,7 @@ import {
   TANGLED_SHORE_OBELISK_FACTION_HASH,
   DONATED_FRACTALINE_PROGRESSION_HASH,
   FRACTALINE_INVENTORY_ITEM_HASH,
-  LIGHT_INFUSED_FRACTALINE_INVENTORY_ITEM_HASH,
+  LIGHT_FUSED_FRACTALINE_INVENTORY_ITEM_HASH,
   RESONANCE_POWER_PROGRESION_HASH,
 } from "./constants";
 
@@ -244,8 +244,8 @@ const App = () => {
         const inventoryFractaline = findInventory(
           FRACTALINE_INVENTORY_ITEM_HASH
         );
-        const lightInfusedInventoryFractaline = findInventory(
-          LIGHT_INFUSED_FRACTALINE_INVENTORY_ITEM_HASH
+        const lightFusedInventoryFractaline = findInventory(
+          LIGHT_FUSED_FRACTALINE_INVENTORY_ITEM_HASH
         );
 
         if (
@@ -269,8 +269,8 @@ const App = () => {
           donatedFractaline: donationProgress.level,
           resonancePower: resonancePowerProgress.level,
           fractalineInInventory: inventoryFractaline?.quantity || 0,
-          lightInfusedFractalineInInventory:
-            lightInfusedInventoryFractaline?.quantity || 0,
+          lightFusedFractalineInInventory:
+            lightFusedInventoryFractaline?.quantity || 0,
           hasCollectedTowerFractaline: hasCollectedFractaline,
         });
       } catch (e) {

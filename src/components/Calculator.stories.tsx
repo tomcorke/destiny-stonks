@@ -13,7 +13,7 @@ export const display = () => (
       donatedFractaline: 5400,
       fractalineInInventory: 750,
       hasCollectedTowerFractaline: true,
-      lightInfusedFractalineInInventory: 24,
+      lightFusedFractalineInInventory: 24,
       resonancePower: 11500,
     }}
   />
