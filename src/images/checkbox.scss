@@ -1,0 +1,50 @@
+@import './application-field';
+@import '../../../mixins';
+
+.applicationField {
+
+}
+
+.question {
+}
+
+.answer {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: flex-start;
+
+  input[type=checkbox] {
+    display: none;
+  }
+
+  .checkDisplay {
+    display: block;
+    width: 1.5em;
+    height: 1.5em;
+    background: url('../../../images/icons/square-regular.svg?fill=%23fff') center center no-repeat;
+    background-size: 100%;
+    cursor: pointer;
+    margin-right: 1em;
+
+    &[data-checked=true] {
+      background-image: url('../../../images/icons/check-square-regular.svg?fill=' + escapeClassColour(monk));
+    }
+  }
+
+  @include error-list-style;
+
+  ul.errors {
+    li {
+      margin-top: 0;
+    }
+  }
+}
+
+.invalid {
+  .answer {
+    .checkDisplay {
+      background: url('../../../images/icons/square-regular.svg?fill=%23f00') center center no-repeat;
+    }
+  }
+}

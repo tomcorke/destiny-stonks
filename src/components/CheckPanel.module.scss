@@ -1,0 +1,32 @@
+.CheckPanel {
+  label {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+
+    margin: 1em 0;
+    border: 1px solid rgba(cyan, 0.5);
+    padding: 1em;
+    border-radius: 3px;
+
+    cursor: pointer;
+
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    .checkDisplay {
+      display: inline-block;
+      margin-right: 1em;
+      width: 30px;
+      height: 30px;
+      background: url("../images/square-regular.svg") center center no-repeat;
+      &.checked {
+        background: greenyellow;
+        background: url("../images/check-square-regular.svg") center center
+          no-repeat;
+      }
+    }
+  }
+}

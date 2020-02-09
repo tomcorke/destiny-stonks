@@ -5,6 +5,7 @@ import addDays from "date-fns/addDays";
 import numeral from "numeral";
 import * as locales from "date-fns/locale";
 import { Locale } from "date-fns";
+import classnames from "classnames";
 
 import STYLES from "./Calculator.module.scss";
 import { DonationData } from "../types";
@@ -12,6 +13,7 @@ import { ResetPanel } from "./ResetPanel";
 import { ObeliskDisplay } from "./ObeliskDisplay";
 import { TowerDisplay } from "./TowerDisplay";
 import { getFullProfile } from "../services/bungie-api";
+import { CheckPanel } from "./CheckPanel";
 
 const getLocale = () => {
   const userLocale = navigator.language;
@@ -63,12 +65,14 @@ interface CalculatorProps {
   isAuthed: boolean;
   donationData?: DonationData;
   fromDate: Date;
+  toggleInitialHasCollectedTowerFractaline?: () => any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export const Calculator = ({
   isAuthed,
   donationData,
   fromDate,
+  toggleInitialHasCollectedTowerFractaline,
 }: CalculatorProps) => {
   const lastResetDate = new Date(Date.UTC(2020, 2, 10, 17, 0, 0, 0));
   const relativeDateString = formatRelative(lastResetDate, fromDate.getTime(), {
@@ -195,7 +199,10 @@ export const Calculator = ({
               {" "}
               (
               <span className={STYLES.statDelta}>
-                +{totalObeliskLevel - getTotalObeliskLevel(lastData)}
+                +
+                {numeral(
+                  totalObeliskLevel - getTotalObeliskLevel(lastData)
+                ).format("0,0")}
               </span>
               )
             </>
@@ -208,7 +215,10 @@ export const Calculator = ({
               {" "}
               (
               <span className={STYLES.statDelta}>
-                +{data.resonancePower - lastData.resonancePower}
+                +
+                {numeral(data.resonancePower - lastData.resonancePower).format(
+                  "0,0"
+                )}
               </span>
               )
             </>
@@ -221,7 +231,10 @@ export const Calculator = ({
               {" "}
               (
               <span className={STYLES.statDelta}>
-                +{data.donatedFractaline - lastData.donatedFractaline}
+                +
+                {numeral(
+                  data.donatedFractaline - lastData.donatedFractaline
+                ).format("0,0")}
               </span>
               )
             </>
@@ -297,7 +310,18 @@ export const Calculator = ({
         <ResetPanel
           key="current"
           header="This week"
-          content={summaryDisplay(donationData)}
+          content={
+            <>
+              {summaryDisplay(data)}
+              <CheckPanel
+                checked={data.hasCollectedTowerFractaline}
+                onClick={() => toggleInitialHasCollectedTowerFractaline?.()}
+              >
+                Check here if you&apos;ve already collected your Generated
+                Fractaline from the Tower this week
+              </CheckPanel>
+            </>
+          }
           suggestedAction={action}
           onActionClick={() => toggleFractalineAction(resetIndex)}
         />
@@ -348,7 +372,11 @@ export const Calculator = ({
             {lastDelta ? (
               <>
                 {" "}
-                (<span className={STYLES.statDelta}>+{lastDelta}</span>)
+                (
+                <span className={STYLES.statDelta}>
+                  +{numeral(lastDelta).format("0,0")}
+                </span>
+                )
               </>
             ) : null}
           </>

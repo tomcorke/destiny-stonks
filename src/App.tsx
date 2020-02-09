@@ -133,6 +133,8 @@ const App = () => {
 
   const [donationData, setDonationData] = useState<DonationData | undefined>();
 
+  const [hasCollectedFractaline, setHasCollectedFractaline] = useState(false);
+
   useEffect(() => {
     const characterProgressions = profileData?.characterProgressions?.data;
     const profileInventory = profileData?.profileInventory?.data;
@@ -208,13 +210,13 @@ const App = () => {
           fractalineInInventory: inventoryFractaline?.quantity || 0,
           lightInfusedFractalineInInventory:
             lightInfusedInventoryFractaline?.quantity || 0,
-          hasCollectedTowerFractaline: true,
+          hasCollectedTowerFractaline: hasCollectedFractaline,
         });
       } catch (e) {
         console.error(e);
       }
     }
-  }, [profileData]);
+  }, [profileData, hasCollectedFractaline]);
 
   useEvent(EVENTS.LOG_OUT, () => {
     setIsAuthed(false);
@@ -222,6 +224,11 @@ const App = () => {
   });
 
   const [nowDate] = useState(new Date());
+
+  const toggleHasCollectedFractaline = useCallback(
+    () => setHasCollectedFractaline(!hasCollectedFractaline),
+    [hasCollectedFractaline, setHasCollectedFractaline]
+  );
 
   return (
     <AppWrapper>
@@ -240,6 +247,7 @@ const App = () => {
         isAuthed={isAuthed}
         donationData={donationData}
         fromDate={nowDate}
+        toggleInitialHasCollectedTowerFractaline={toggleHasCollectedFractaline}
       />
     </AppWrapper>
   );
