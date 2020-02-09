@@ -26,7 +26,7 @@
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  margin-bottom: 1em;
+  margin: 0;
 
   .logOutIcon {
     background-image: url("../images/logout.png");
@@ -139,6 +139,10 @@
       "https://www.bungie.net/7/ca/bungie/icons/logos/stadia/icon.png"
     );
   }
+
+  &.selected {
+    box-shadow: 0 0 2px 2px black, 0 0 5px 2px cyan;
+  }
 }
 
 .crossSaveDisplayWrapper {
@@ -200,4 +204,13 @@
   &_stadia {
     background-image: url("https://www.bungie.net/7/ca/bungie/icons/logos/stadia/icon.png");
   }
+}
+
+.selectionPrompt {
+  width: 100%;
+  margin-top: 2em;
+  text-align: center;
+  background: rgba(black, 0.9);
+  padding: 5px 10px;
+  border-radius: 5px;
 }

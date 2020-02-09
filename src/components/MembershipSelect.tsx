@@ -9,6 +9,7 @@ import STYLES from "./MembershipSelect.module.scss";
 export interface RequiredApi extends PartialApi {
   bungieAuth: {
     getDestinyMemberships: () => UserInfoCard[] | undefined;
+    getSelectedDestinyMembership: () => UserInfoCard | undefined;
   };
 }
 
@@ -85,6 +86,7 @@ const MembershipSelect = ({
   onLogout = defaultOnLogout,
 }: MembershipSelectProps) => {
   const destinyMemberships = api.bungieAuth.getDestinyMemberships();
+  const selectedMembership = api.bungieAuth.getSelectedDestinyMembership();
 
   if (!destinyMemberships) {
     return null;
@@ -109,6 +111,8 @@ const MembershipSelect = ({
                 {
                   [STYLES.crossSaveActive]: isCrossSavePrimary(m),
                   [STYLES.crossSaveDisabled]: isCrossSaveSecondary(m),
+                  [STYLES.selected]:
+                    m.membershipId === selectedMembership?.membershipId,
                 }
               )}
               onClick={() => onMembershipSelect(m)}
@@ -130,6 +134,11 @@ const MembershipSelect = ({
         <div className={STYLES.logOutIcon} />
         <div className={STYLES.logOutText}>Log out</div>
       </button>
+      {!selectedMembership ? (
+        <div className={STYLES.selectionPrompt}>
+          Select a Destiny membership
+        </div>
+      ) : null}
     </div>
   );
 };

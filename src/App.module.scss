@@ -29,13 +29,29 @@
     "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
     "Droid Sans", "Helvetica Neue", sans-serif;
 
-  button {
-    background: none;
-    border-radius: 6px;
-    border: none;
-    margin-top: 1em;
+  .logIn {
+    padding: 5px 10px;
+    background-color: black;
     color: white;
-    text-decoration: underline;
     cursor: pointer;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    border-radius: 2px;
+    box-shadow: 0 0 2px 1px black, 0 0 5px 2px cyan;
+    animation: shadow-pulse 3s linear infinite;
+    justify-content: space-between;
+  }
+
+  @keyframes shadow-pulse {
+    from {
+      box-shadow: 0 0 2px 1px black, 0 0 5px 2px cyan;
+    }
+    50% {
+      box-shadow: 0 0 2px 1px black, 0 0 15px 2px cyan;
+    }
+    to {
+      box-shadow: 0 0 2px 1px black, 0 0 5px 2px cyan;
+    }
   }
 }

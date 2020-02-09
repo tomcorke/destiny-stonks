@@ -49,6 +49,7 @@ const mockApi: RequiredApi = {
           applicableMembershipTypes: [5],
         },
       ] as any) as UserInfoCard[],
+    getSelectedDestinyMembership: () => undefined,
   },
 };
 
@@ -62,6 +63,7 @@ const mockApiWithMembershipType = (membershipType: number) => ({
           displayName: "Test Membership",
         },
       ] as any) as UserInfoCard[],
+    getSelectedDestinyMembership: () => undefined,
   },
 });
 
@@ -89,6 +91,7 @@ const mockApiWithCrossSave = (
           displayName: "Test Membership",
         })),
       ] as any) as UserInfoCard[],
+    getSelectedDestinyMembership: () => undefined,
   },
 });
 

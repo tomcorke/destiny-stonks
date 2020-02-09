@@ -231,9 +231,9 @@ const App = () => {
           <MembershipSelect api={api} onMembershipSelect={onSelectMembership} />
         ) : null}
         {!isAuthed && !_hasManuallyAuthed ? (
-          <button className={STYLES.logIn} onClick={manualStartAuth}>
-            Log in
-          </button>
+          <div className={STYLES.logIn} onClick={manualStartAuth}>
+            Log in with Bungie
+          </div>
         ) : null}
       </div>
       <Calculator

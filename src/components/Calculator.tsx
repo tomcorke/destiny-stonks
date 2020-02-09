@@ -334,14 +334,23 @@ export const Calculator = ({
       }
     }
 
+    const lastDelta = lastData
+      ? data.donatedFractaline - lastData.donatedFractaline
+      : null;
+
     resetList.push(
       <ResetPanel
         key="end"
         header="End of Season of Dawn"
         content={
           <>
-            Total fractaline donated: {data.donatedFractaline} (
-            <span className={STYLES.statDelta}>+{data.resonancePower}</span>)
+            Total fractaline donated: {data.donatedFractaline}
+            {lastDelta ? (
+              <>
+                {" "}
+                (<span className={STYLES.statDelta}>+{lastDelta}</span>)
+              </>
+            ) : null}
           </>
         }
       />

@@ -356,6 +356,9 @@ export const auth = async (): Promise<boolean> => {
 
 export const logOut = async () => {
   localStorage.removeItem(MANUAL_AUTHED_STORAGE_KEY);
+  // Clear selected membership on manual logout too
+  console.log("clearing selected membership");
+  localStorage.removeItem(DESTINY_MEMBERSHIP_STORAGE_KEY);
   clearStorage();
   eventEmitter.emit(EVENTS.LOG_OUT);
 };
