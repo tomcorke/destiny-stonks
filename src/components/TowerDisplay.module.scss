@@ -19,10 +19,11 @@
   grid-template-areas:
     "iconAndValue"
     "label";
-  min-width: 140px;
+  width: 140px;
   min-height: 140px;
   margin: 0.5em;
   margin-bottom: -1em;
+  text-align: center;
 
   .icon {
     grid-area: iconAndValue;
@@ -44,6 +45,9 @@
     font-size: 20px;
     position: relative;
     top: -1em;
+    height: 50px;
+    text-shadow: 1px 0 2px black, -1px 0 2px black, 0 1px 2px black,
+      0 -1px 2px black;
   }
 
   .value {

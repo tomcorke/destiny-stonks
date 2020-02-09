@@ -211,7 +211,7 @@ export const getFullProfile = async (
     destinyMembershipId: membershipId,
     membershipType,
   });
-
+  /*
   profile.then(async response => {
     const characterId = Object.keys(
       response?.Response?.characters?.data || {}
@@ -229,6 +229,7 @@ export const getFullProfile = async (
       console.log({ vendor: vendor });
     }
   });
+  */
 
   return profile;
 };

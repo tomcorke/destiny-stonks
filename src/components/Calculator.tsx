@@ -11,6 +11,7 @@ import { DonationData } from "../types";
 import { ResetPanel } from "./ResetPanel";
 import { ObeliskDisplay } from "./ObeliskDisplay";
 import { TowerDisplay } from "./TowerDisplay";
+import { getFullProfile } from "../services/bungie-api";
 
 const getLocale = () => {
   const userLocale = navigator.language;
@@ -100,40 +101,43 @@ export const Calculator = ({
 
   const resetsRemaining = getResetsUntil(fromDate, lastResetDate);
 
-  const DONATE_RESETS = 3;
-  const shouldDonate = resetsRemaining.length + 1 <= DONATE_RESETS;
-
   const clone = <T extends object>(data: T): T =>
     JSON.parse(JSON.stringify(data)) as T;
+
+  const getTotalObeliskLevel = (data: DonationData) =>
+    data.obeliskLevels.edz +
+    data.obeliskLevels.mars +
+    data.obeliskLevels.nessus +
+    data.obeliskLevels.tangledShore;
+
+  const getResonancePower = (totalObeliskLevel: number) =>
+    totalObeliskLevel * 100 + 200;
 
   const calculateInvestment = (
     data: DonationData,
     checkCollected = false
   ): DonationData => {
-    let fractalineToUse = data.resonancePower + data.fractalineInInventory;
-    if (checkCollected && data.hasCollectedTowerFractaline) {
-      fractalineToUse = data.fractalineInInventory;
+    const d = clone(data);
+    let fractalineToUse = d.resonancePower + d.fractalineInInventory;
+    if (checkCollected && d.hasCollectedTowerFractaline) {
+      fractalineToUse = d.fractalineInInventory;
     }
     let addRanks = Math.floor(fractalineToUse / 200);
     const remainingFractaline = fractalineToUse - addRanks * 200;
-    addRanks += data.lightInfusedFractalineInInventory;
+    addRanks += d.lightInfusedFractalineInInventory;
 
-    const totalObeliskLevel =
-      data.obeliskLevels.edz +
-      data.obeliskLevels.mars +
-      data.obeliskLevels.nessus +
-      data.obeliskLevels.tangledShore;
+    const totalObeliskLevel = getTotalObeliskLevel(d);
     const newObeliskLevel = totalObeliskLevel + addRanks;
-    const newResonancePower = newObeliskLevel * 100 + 200;
+    const newResonancePower = getResonancePower(newObeliskLevel);
 
     return {
+      ...d,
       obeliskLevels: {
         edz: newObeliskLevel,
         mars: 0,
         nessus: 0,
         tangledShore: 0,
       },
-      donatedFractaline: data.donatedFractaline,
       fractalineInInventory: remainingFractaline,
       lightInfusedFractalineInInventory: 0,
       resonancePower: newResonancePower,
@@ -145,20 +149,36 @@ export const Calculator = ({
     data: DonationData,
     checkCollected = false
   ): DonationData => {
-    if (checkCollected && data.hasCollectedTowerFractaline) {
-      return data;
+    const d = clone(data);
+    let useResonancePower = d.resonancePower;
+    if (d.lightInfusedFractalineInInventory > 0) {
+      const newObeliskLevel =
+        getTotalObeliskLevel(d) + d.lightInfusedFractalineInInventory;
+      d.resonancePower = getResonancePower(newObeliskLevel);
+      if (checkCollected && !d.hasCollectedTowerFractaline) {
+        useResonancePower = d.resonancePower;
+      }
+      d.obeliskLevels = {
+        edz: newObeliskLevel,
+        mars: 0,
+        nessus: 0,
+        tangledShore: 0,
+      };
     }
+    let fractalineToUse = useResonancePower + d.fractalineInInventory;
+    if (checkCollected && d.hasCollectedTowerFractaline) {
+      fractalineToUse = d.fractalineInInventory;
+    }
+    const eligibleFractaline = Math.floor(fractalineToUse / 100) * 100;
+    const remaining = fractalineToUse - eligibleFractaline;
     return {
-      ...data,
-      donatedFractaline: data.donatedFractaline + data.resonancePower,
+      ...d,
+      donatedFractaline: d.donatedFractaline + eligibleFractaline,
+      fractalineInInventory: remaining,
+      lightInfusedFractalineInInventory: 0,
+      hasCollectedTowerFractaline: false,
     };
   };
-
-  const getTotalObeliskLevel = (data: DonationData) =>
-    data.obeliskLevels.edz +
-    data.obeliskLevels.mars +
-    data.obeliskLevels.nessus +
-    data.obeliskLevels.tangledShore;
 
   const summaryDisplay = (data: DonationData, lastData?: DonationData) => {
     const totalObeliskLevel =
@@ -230,44 +250,87 @@ export const Calculator = ({
     );
   };
 
+  const DONATE_RESETS = 3;
+
+  type FractalineAction = "invest" | "donate";
+  const [actionOverrides, setActionOverrides] = useState<{
+    [key: number]: FractalineAction | undefined;
+  }>({});
+  const getFractalineAction = (
+    resetIndex: number,
+    ignoreOverrides = false
+  ): FractalineAction => {
+    const override = actionOverrides[resetIndex];
+    if (override && !ignoreOverrides) {
+      return override;
+    }
+    if (resetIndex <= 0 - DONATE_RESETS) {
+      return "invest";
+    }
+    return "donate";
+  };
+
+  const toggleFractalineAction = (resetIndex: number) => {
+    const action = getFractalineAction(resetIndex);
+    const newAction = action === "donate" ? "invest" : "donate";
+    setActionOverrides({
+      ...actionOverrides,
+      [resetIndex]: newAction,
+    });
+  };
+  const resetFractalineAction = (resetIndex: number) => {
+    setActionOverrides({
+      ...actionOverrides,
+      [resetIndex]: undefined,
+    });
+  };
+
   const resetList: (JSX.Element | string)[] = [];
   if (donationData) {
     let data = donationData;
     let lastData: DonationData | undefined;
 
     if (resetsRemaining.length > 0) {
+      const resetIndex = 0 - resetsRemaining.length;
+      const action = getFractalineAction(resetIndex);
       const currentReset = (
         <ResetPanel
           key="current"
           header="This week"
           content={summaryDisplay(donationData)}
-          suggestedAction={shouldDonate ? "donate" : "invest"}
+          suggestedAction={action}
+          onActionClick={() => toggleFractalineAction(resetIndex)}
         />
       );
       resetList.push(currentReset);
       lastData = clone(data);
-      data = shouldDonate
-        ? calculateDonation(data, true)
-        : calculateInvestment(data, true);
+      data =
+        action === "donate"
+          ? calculateDonation(data, true)
+          : calculateInvestment(data, true);
     }
 
     if (resetsRemaining.length > 1) {
       for (let i = 0; i < resetsRemaining.length; i++) {
         const resetStart = resetsRemaining[i];
         // const resetEnd = addDays(resetStart, 7);
-        const donateThisWeek = resetsRemaining.length - i <= DONATE_RESETS;
+        const resetIndex = 1 - (resetsRemaining.length - i);
+        console.log(resetIndex);
+        const action = getFractalineAction(resetIndex);
         resetList.push(
           <ResetPanel
             key={resetStart.toISOString()}
             header={`Week beginning ${resetStart.toLocaleDateString()}`}
             content={summaryDisplay(data, lastData)}
-            suggestedAction={donateThisWeek ? "donate" : "invest"}
+            suggestedAction={action === "donate" ? "donate" : "invest"}
+            onActionClick={() => toggleFractalineAction(resetIndex)}
           />
         );
         lastData = clone(data);
-        data = donateThisWeek
-          ? calculateDonation(data)
-          : calculateInvestment(data);
+        data =
+          action === "donate"
+            ? calculateDonation(data)
+            : calculateInvestment(data);
       }
     }
 
@@ -296,14 +359,20 @@ export const Calculator = ({
               resonancePower={donationData.resonancePower}
               donated={donationData.donatedFractaline}
               collected={donationData.hasCollectedTowerFractaline}
+              fractalineInInventory={donationData.fractalineInInventory}
+              lightInfusedFractalineInInventory={
+                donationData.lightInfusedFractalineInInventory
+              }
             />
           </>
         ) : isAuthed ? (
           <div>Fetching donation data...</div>
         ) : null}
+
         <div>Current date: {fromDate.toLocaleDateString()}</div>
         <div>Season of Dawn ends: {relativeDateString}</div>
-        {shouldDonate ? (
+
+        {getFractalineAction(0 - resetsRemaining.length, true) === "donate" ? (
           <div className={STYLES.donateHint}>
             {timeUntil === 1 ? timeUnit : timeUnits} remaining to donate
             Fractaline: {numeral(timeUntil).format("0,0")}
@@ -316,6 +385,7 @@ export const Calculator = ({
             for maximum fractaline returns.
           </div>
         )}
+
         <div className={STYLES.resetList}>{resetList}</div>
       </div>
     </div>

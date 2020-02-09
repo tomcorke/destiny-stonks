@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import throttle from "lodash/throttle";
 
+import api from "./services/api";
 import { Calculator } from "./components/Calculator";
 
 import STYLES from "./App.module.scss";
@@ -12,6 +13,8 @@ import {
   manualStartAuth,
   getSelectedDestinyMembership,
   logOut,
+  hasSelectedDestinyMembership,
+  setSelectedDestinyMembership,
 } from "./services/bungie-auth";
 import { EVENTS, useEvent } from "./services/events";
 import { Title } from "./components/Title";
@@ -37,6 +40,8 @@ import {
 
 import "normalize.css";
 import "./index.css";
+import { UserInfoCard } from "bungie-api-ts/user";
+import MembershipSelect from "./components/MembershipSelect";
 
 const doAuth = throttle(
   (
@@ -73,6 +78,17 @@ const App = () => {
   const [isAuthed, setIsAuthed] = useState(hasValidAuth());
   const [hasAuthError, setHasAuthError] = useState(false);
   const _hasManuallyAuthed = hasManuallyAuthed();
+  const [hasSelectedMembership, setHasMembership] = useState(
+    hasSelectedDestinyMembership()
+  );
+  const onSelectMembership = useCallback(
+    (membership: UserInfoCard) => {
+      setSelectedDestinyMembership(membership);
+      setHasMembership(true);
+    },
+    [setHasMembership]
+  );
+
   const selectedMembership = getSelectedDestinyMembership();
 
   useEffect(() => {
@@ -89,7 +105,7 @@ const App = () => {
   >(undefined);
   useEffect(() => {
     (async () => {
-      if (isAuthed) {
+      if (isAuthed && hasSelectedMembership) {
         try {
           const membership = await getSelectedDestinyMembership();
           if (!membership) {
@@ -211,13 +227,8 @@ const App = () => {
     <AppWrapper>
       <Title />
       <div className={STYLES.auth}>
-        {isAuthed && selectedMembership ? (
-          <>
-            <div>Logged in as {selectedMembership.displayName}</div>
-            <button className={STYLES.logOut} onClick={logOut}>
-              Log out
-            </button>
-          </>
+        {isAuthed ? (
+          <MembershipSelect api={api} onMembershipSelect={onSelectMembership} />
         ) : null}
         {!isAuthed && !_hasManuallyAuthed ? (
           <button className={STYLES.logIn} onClick={manualStartAuth}>

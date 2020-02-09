@@ -78,7 +78,6 @@ $panel-spacing: 20px;
   font-size: 30px;
   z-index: 2;
   font-weight: bold;
-  pointer-events: none;
   text-shadow: -2px 0 2px black, 2px 0 2px black, 0 -2px 2px black,
     0 2px 2px black;
 }
@@ -93,5 +92,9 @@ $panel-spacing: 20px;
 
   &.donate {
     color: red;
+  }
+
+  &.withAction {
+    cursor: pointer;
   }
 }

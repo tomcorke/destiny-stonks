@@ -5,5 +5,11 @@ import { TowerDisplay } from "./TowerDisplay";
 export default { title: "Tower Display", component: TowerDisplay };
 
 export const display = () => (
-  <TowerDisplay donated={123456} resonancePower={654321} collected={false} />
+  <TowerDisplay
+    donated={123456}
+    resonancePower={654321}
+    collected={false}
+    fractalineInInventory={7500}
+    lightInfusedFractalineInInventory={4}
+  />
 );

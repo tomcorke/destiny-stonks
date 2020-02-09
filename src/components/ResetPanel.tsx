@@ -7,12 +7,14 @@ interface ResetPanelProps {
   header: string;
   content: string | JSX.Element | JSX.Element[];
   suggestedAction?: string;
+  onActionClick?: () => any;
 }
 
 export const ResetPanel = ({
   header,
   content,
   suggestedAction,
+  onActionClick,
 }: ResetPanelProps) => {
   return (
     <div className={STYLES.ResetPanel}>
@@ -24,8 +26,10 @@ export const ResetPanel = ({
             <div
               className={classnames(
                 STYLES.suggestedActionInner,
-                STYLES[suggestedAction]
+                STYLES[suggestedAction],
+                { [STYLES.withAction]: !!onActionClick }
               )}
+              onClick={() => onActionClick?.()}
             >
               {suggestedAction}
             </div>

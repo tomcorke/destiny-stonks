@@ -4,12 +4,16 @@ import numeral from "numeral";
 import STYLES from "./TowerDisplay.module.scss";
 
 import towerObeliskImage from "../images/tower_obelisk.png";
-import fractalineImage from "../images/fractaline_trans_2.png";
+import fractalineImage from "../images/fractaline-trans.png";
+import fractalineImage2 from "../images/fractaline_trans_2.png";
+import lightInfusedFractaline from "../images/light_infused.jpg";
 
 interface TowerDisplayProps {
   donated: number;
   resonancePower: number;
   collected: boolean;
+  fractalineInInventory: number;
+  lightInfusedFractalineInInventory: number;
 }
 
 export const Item = ({
@@ -33,6 +37,8 @@ export const Item = ({
 export const TowerDisplay = ({
   resonancePower,
   donated,
+  fractalineInInventory,
+  lightInfusedFractalineInInventory,
 }: TowerDisplayProps) => {
   return (
     <div className={STYLES.TowerDisplay}>
@@ -45,7 +51,17 @@ export const TowerDisplay = ({
       <Item
         value={donated}
         label="Donated Fractaline"
+        iconPath={fractalineImage2}
+      />
+      <Item
+        value={fractalineInInventory}
+        label="Fractaline in Inventory"
         iconPath={fractalineImage}
+      />
+      <Item
+        value={lightInfusedFractalineInInventory}
+        label="Light-Infused Fractaline"
+        iconPath={lightInfusedFractaline}
       />
     </div>
   );

@@ -8,7 +8,7 @@ addDecorator(storyFn => <AppWrapper>{storyFn()}</AppWrapper>);
 
 addParameters({
   options: {
-    showAddonPanel: false,
+    showPanel: false,
   },
 });
 
