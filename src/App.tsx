@@ -92,6 +92,9 @@ const App = () => {
       if (isAuthed) {
         try {
           const membership = await getSelectedDestinyMembership();
+          if (!membership) {
+            throw Error("Missing selected membership");
+          }
           const profileResponse = await getFullProfile(
             membership.membershipType,
             membership.membershipId
@@ -104,15 +107,15 @@ const App = () => {
           if (e.message === "401") {
             setIsAuthed(false);
             doAuth(setIsAuthed, setHasAuthError);
+            return;
           }
+          throw e;
         }
       }
     })();
   }, [isAuthed, setIsAuthed, setHasAuthError, setBungieSystemDisabled]);
 
-  const [donationData, setDonationData] = useState<DonationData | undefined>(
-    undefined
-  );
+  const [donationData, setDonationData] = useState<DonationData | undefined>();
 
   useEffect(() => {
     const characterProgressions = profileData?.characterProgressions?.data;
@@ -124,7 +127,7 @@ const App = () => {
         [] as DestinyCharacterProgressionComponent[]
       );
 
-      const findFaction = (hash: string): DestinyFactionProgression | null => {
+      const findFaction = (hash: number): DestinyFactionProgression | null => {
         for (const p of flatProgressions) {
           if (p.factions[hash]) {
             return p.factions[hash];
@@ -133,7 +136,7 @@ const App = () => {
         return null;
       };
 
-      const findProgression = (hash: string): DestinyProgression | null => {
+      const findProgression = (hash: number): DestinyProgression | null => {
         for (const p of flatProgressions) {
           if (p.progressions[hash]) {
             return p.progressions[hash];
@@ -142,7 +145,9 @@ const App = () => {
         return null;
       };
 
-      const findInventory = (hash: number): DestinyItemComponent | null => {
+      const findInventory = (
+        hash: number
+      ): DestinyItemComponent | null | undefined => {
         return profileInventory.items.find(item => item.itemHash === hash);
       };
 
@@ -164,6 +169,17 @@ const App = () => {
           LIGHT_INFUSED_FRACTALINE_INVENTORY_ITEM_HASH
         );
 
+        if (
+          !edzProgress ||
+          !marsProgress ||
+          !nessusProgress ||
+          !tangledProgress ||
+          !donationProgress ||
+          !resonancePowerProgress
+        ) {
+          return;
+        }
+
         setDonationData({
           obeliskLevels: {
             edz: edzProgress.level,
@@ -176,7 +192,7 @@ const App = () => {
           fractalineInInventory: inventoryFractaline?.quantity || 0,
           lightInfusedFractalineInInventory:
             lightInfusedInventoryFractaline?.quantity || 0,
-          hasCollectedTowerFractaline: false,
+          hasCollectedTowerFractaline: true,
         });
       } catch (e) {
         console.error(e);

@@ -20,13 +20,15 @@ export const ResetPanel = ({
         <div className={STYLES.header}>{header}</div>
         <div className={STYLES.content}>{content}</div>
         {!!suggestedAction ? (
-          <div
-            className={classnames(
-              STYLES.suggestedAction,
-              STYLES[suggestedAction]
-            )}
-          >
-            {suggestedAction}
+          <div className={STYLES.suggestedAction}>
+            <div
+              className={classnames(
+                STYLES.suggestedActionInner,
+                STYLES[suggestedAction]
+              )}
+            >
+              {suggestedAction}
+            </div>
           </div>
         ) : null}
       </div>

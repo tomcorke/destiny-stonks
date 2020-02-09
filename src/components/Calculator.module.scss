@@ -1,4 +1,6 @@
 .Calculator {
+  width: 100%;
+  max-width: 800px;
 }
 
 .input[type="text"] {
@@ -36,4 +38,20 @@
       margin-bottom: 0.5em;
     }
   }
+}
+
+.donateHint,
+.dontDonateWarning {
+  background: #333;
+  padding: 1em;
+  border-radius: 10px;
+  line-height: 1.5em;
+}
+
+.dontDonateWarning {
+  background: darkred;
+}
+
+.statDelta {
+  color: greenyellow;
 }

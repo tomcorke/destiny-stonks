@@ -1,4 +1,5 @@
 import React from "react";
+import numeral from "numeral";
 
 import edzObeliskIcon from "../images/edz_obelisk.png";
 import marsObeliskIcon from "../images/mars_obelisk.png";
@@ -30,7 +31,7 @@ export const Obelisk = ({
       <img alt={`${name} obelisk`} src={iconPath} />
     </div>
     <div className={STYLES.name}>{name}</div>
-    <div className={STYLES.level}>{level}</div>
+    <div className={STYLES.level}>{numeral(level).format("0,0")}</div>
   </div>
 );
 

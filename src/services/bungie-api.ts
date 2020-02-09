@@ -3,6 +3,8 @@ import {
   DestinyVendorDefinition,
   getDestinyManifest,
   getProfile,
+  DestinyComponentType,
+  getVendor,
 } from "bungie-api-ts/destiny2";
 import { HttpClientConfig } from "bungie-api-ts/http";
 import { get, set } from "idb-keyval";
@@ -57,7 +59,7 @@ export const bungieAuthedFetch = async (config: HttpClientConfig) => {
 const MANIFEST_VERSION_KEY = "MANIFEST_VERSION";
 const MANIFEST_IDB_KEY = "MANIFEST_DATA";
 export interface ManifestData {
-  // [key: string]: any | undefined;
+  [key: string]: any | undefined;
   DestinyVendorDefinition: {
     [key: string]: DestinyVendorDefinition | undefined;
   };
@@ -187,25 +189,46 @@ export const getManifest = async (): Promise<GetManifestResult> => {
   return getManifestPromise;
 };
 
-export const getFullProfile = (
+export const getFullProfile = async (
   membershipType: number,
   membershipId: string
 ) => {
-  return getProfile(bungieAuthedFetch, {
+  const profile = getProfile(bungieAuthedFetch, {
     components: [
       // 101, // DestinyComponentType.VendorReceipts
-      // 200, // DestinyComponentType.Characters,
+      200, // DestinyComponentType.Characters,
       // 201, // DestinyComponentType.CharacterInventories,
       202, // DestinyComponentType.CharacterProgressions
       // 205, // DestinyComponentType.CharacterEquipment,
       102, // DestinyComponentType.ProfileInventories,
       // 104, // DestinyComponentType.ProfileProgression
       // 300, // DestinyComponentType.ItemInstances,
-      400, // DestinyComponentType.Vendors
-      402, // DestinyComponentType.VendorSales
+      // 400, // DestinyComponentType.Vendors
+      // 402, // DestinyComponentType.VendorSales
       // 900, // DestinyComponentType.Records
+      // 500, // DestinyComponentType.Kiosks
     ],
     destinyMembershipId: membershipId,
     membershipType,
   });
+
+  profile.then(async response => {
+    const characterId = Object.keys(
+      response?.Response?.characters?.data || {}
+    )[0];
+    if (characterId) {
+      const vendor = await getVendor(bungieAuthedFetch, {
+        membershipType: membershipType,
+        destinyMembershipId: membershipId,
+        characterId: characterId,
+        vendorHash: 2919558013,
+        components: [
+          402, //DestinyComponentType.VendorSales
+        ],
+      });
+      console.log({ vendor: vendor });
+    }
+  });
+
+  return profile;
 };
