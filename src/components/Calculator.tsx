@@ -101,7 +101,7 @@ export const Calculator = ({
     }
     const seconds = secondsUntil(fromDate, lastResetDate);
     return setTimeRemaining([seconds, "Second", "Seconds"]);
-  }, 1000);
+  }, 1000 * 60);
 
   const resetsRemaining = getResetsUntil(fromDate, lastResetDate);
 
@@ -291,12 +291,6 @@ export const Calculator = ({
       [resetIndex]: newAction,
     });
   };
-  const resetFractalineAction = (resetIndex: number) => {
-    setActionOverrides({
-      ...actionOverrides,
-      [resetIndex]: undefined,
-    });
-  };
 
   const resetList: (JSX.Element | string)[] = [];
   if (donationData) {
@@ -339,7 +333,6 @@ export const Calculator = ({
         const resetStart = resetsRemaining[i];
         // const resetEnd = addDays(resetStart, 7);
         const resetIndex = 1 - (resetsRemaining.length - i);
-        console.log(resetIndex);
         const action = getFractalineAction(resetIndex);
         resetList.push(
           <ResetPanel

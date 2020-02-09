@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import throttle from "lodash/throttle";
+import addDays from "date-fns/addDays";
 
 import api from "./services/api";
 import { Calculator } from "./components/Calculator";
@@ -133,7 +134,67 @@ const App = () => {
 
   const [donationData, setDonationData] = useState<DonationData | undefined>();
 
-  const [hasCollectedFractaline, setHasCollectedFractaline] = useState(false);
+  interface HasCollectedFractalineData {
+    hasCollectedFractaline: boolean;
+    lastChangedTimestamp: number;
+  }
+  const HAS_COLLECTED_FRACTALINE_KEY = "hasCollectedFractalineData";
+  const hasCollectedFractalineDataString = localStorage.getItem(
+    HAS_COLLECTED_FRACTALINE_KEY
+  );
+  let initialHasCollectedFractaline = false;
+
+  const getPreviousReset = (date: Date) => {
+    let d = date;
+    const day = d.getUTCDay();
+    console.log(d.toUTCString(), day);
+    if (day > 2) {
+      d = addDays(d, 2 - day);
+    } else {
+      d = addDays(d, 2 - day - 7);
+    }
+    d.setUTCHours(17);
+    d.setUTCMinutes(0);
+    d.setUTCSeconds(0);
+    d.setUTCMilliseconds(0);
+    return d;
+  };
+  getPreviousReset(new Date());
+
+  try {
+    if (hasCollectedFractalineDataString) {
+      const hasCollectedFractalineData = JSON.parse(
+        hasCollectedFractalineDataString
+      ) as HasCollectedFractalineData;
+      const previousReset = getPreviousReset(new Date());
+      const dateFromData = new Date(
+        hasCollectedFractalineData.lastChangedTimestamp
+      );
+      if (dateFromData > previousReset) {
+        // Only apply if last date set was after previous reset
+        initialHasCollectedFractaline =
+          hasCollectedFractalineData.hasCollectedFractaline;
+      }
+    }
+  } catch (e) {
+    console.error("Error parsing HasCollectedFractalineData");
+  }
+
+  const [hasCollectedFractaline, setHasCollectedFractaline] = useState(
+    initialHasCollectedFractaline
+  );
+
+  const toggleHasCollectedFractaline = useCallback(() => {
+    const newValue = !hasCollectedFractaline;
+    localStorage.setItem(
+      HAS_COLLECTED_FRACTALINE_KEY,
+      JSON.stringify({
+        hasCollectedFractaline: newValue,
+        lastChangedTimestamp: Date.now(),
+      })
+    );
+    setHasCollectedFractaline(newValue);
+  }, [hasCollectedFractaline, setHasCollectedFractaline]);
 
   useEffect(() => {
     const characterProgressions = profileData?.characterProgressions?.data;
@@ -224,11 +285,6 @@ const App = () => {
   });
 
   const [nowDate] = useState(new Date());
-
-  const toggleHasCollectedFractaline = useCallback(
-    () => setHasCollectedFractaline(!hasCollectedFractaline),
-    [hasCollectedFractaline, setHasCollectedFractaline]
-  );
 
   return (
     <AppWrapper>

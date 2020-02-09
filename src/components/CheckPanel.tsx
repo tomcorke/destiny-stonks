@@ -19,7 +19,7 @@ export const CheckPanel = ({ checked, children, onClick }: CheckPanelProps) => {
           onClick?.();
         }}
       >
-        <input type="checkbox" checked={checked} />
+        <input type="checkbox" defaultChecked={checked} />
         <div
           className={classnames(STYLES.checkDisplay, {
             [STYLES.checked]: checked,
