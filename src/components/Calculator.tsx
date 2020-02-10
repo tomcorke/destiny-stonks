@@ -251,7 +251,7 @@ export const Calculator = ({
           </div>
         ) : null}
         {data.hasCollectedTowerFractaline ? (
-          <div>
+          <div className={STYLES.alreadyCollectedMessage}>
             You&apos;ve already collected your tower fractaline this week, so
             only the fractaline in your inventory will be used for investment
             calculation.

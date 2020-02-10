@@ -18,7 +18,11 @@ export const ResetPanel = ({
 }: ResetPanelProps) => {
   return (
     <div className={STYLES.ResetPanel}>
-      <div className={STYLES.inner}>
+      <div
+        className={classnames(STYLES.inner, {
+          [STYLES.withSuggestedAction]: !!suggestedAction,
+        })}
+      >
         <div className={STYLES.header}>{header}</div>
         <div className={STYLES.content}>{content}</div>
         {!!suggestedAction ? (
