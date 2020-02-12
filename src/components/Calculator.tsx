@@ -38,6 +38,7 @@ const weeksUntil = (fromDate: Date, toDate: Date) =>
 
 const getResetsUntil = (fromDate: Date, toDate: Date) => {
   const day = fromDate.getUTCDay();
+
   const results: Date[] = [];
   let d = fromDate;
   if (day < 2) {
@@ -48,11 +49,15 @@ const getResetsUntil = (fromDate: Date, toDate: Date) => {
   d.setUTCHours(17);
   d.setUTCMinutes(0);
   d.setUTCSeconds(0);
+  d.setUTCMilliseconds(0);
+  const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+
   while (d < toDate) {
     if (d < toDate) {
       results.push(d);
     }
-    d = addDays(d, 7);
+    // Don't use addDays because it does things that are too clever with daylight savings time
+    d = new Date(d.getTime() + SEVEN_DAYS);
   }
   return results;
 };

@@ -6,7 +6,7 @@ export default { title: "Calculator", component: Calculator };
 
 export const display = () => (
   <Calculator
-    fromDate={new Date(2020, 1, 8, 0, 0, 0)}
+    fromDate={new Date(Date.UTC(2020, 1, 12, 11, 12, 13, 123))}
     isAuthed={true}
     donationData={{
       obeliskLevels: { edz: 11, nessus: 62, mars: 29, tangledShore: 11 },
