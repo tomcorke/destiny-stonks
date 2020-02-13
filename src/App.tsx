@@ -265,7 +265,15 @@ const App = () => {
             tangledShore: tangledProgress.level,
           },
           donatedFractaline: donationProgress.level,
-          resonancePower: resonancePowerProgress.level,
+          resonancePower: Math.max(
+            resonancePowerProgress.level,
+            (edzProgress.level +
+              marsProgress.level +
+              nessusProgress.level +
+              tangledProgress.level) *
+              100 +
+              200
+          ),
           fractalineInInventory: inventoryFractaline.reduce(
             (total, item) => total + item.quantity,
             0

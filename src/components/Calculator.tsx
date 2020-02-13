@@ -341,7 +341,21 @@ export const Calculator = ({
           <ResetPanel
             key={resetStart.toISOString()}
             header={`Week beginning ${resetStart.toLocaleDateString()}`}
-            content={summaryDisplay(data, lastData)}
+            content={
+              <>
+                {summaryDisplay(data, lastData)}
+                {resetIndex === -2 ? (
+                  <div className={STYLES.donateOrInvestChoice}>
+                    <div>{`You can donate or invest this week, without affecting your
+                    end total donated. If you reinvest your Fractaline you'll get back extra
+                    legendary items and shaders from the obelisks, but it's more
+                    clicking overall.`}</div>
+                    <div>{`It's up to you! Click "DONATE" or "INVEST"
+                    to see how your action this week affects following weeks.`}</div>
+                  </div>
+                ) : null}
+              </>
+            }
             suggestedAction={action === "donate" ? "donate" : "invest"}
             onActionClick={() => toggleFractalineAction(resetIndex)}
           />
