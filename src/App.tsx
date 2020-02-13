@@ -224,10 +224,8 @@ const App = () => {
         return null;
       };
 
-      const findInventory = (
-        hash: number
-      ): DestinyItemComponent | null | undefined => {
-        return profileInventory.items.find(item => item.itemHash === hash);
+      const findInventory = (hash: number): DestinyItemComponent[] => {
+        return profileInventory.items.filter(item => item.itemHash === hash);
       };
 
       try {
@@ -268,9 +266,14 @@ const App = () => {
           },
           donatedFractaline: donationProgress.level,
           resonancePower: resonancePowerProgress.level,
-          fractalineInInventory: inventoryFractaline?.quantity || 0,
-          lightFusedFractalineInInventory:
-            lightFusedInventoryFractaline?.quantity || 0,
+          fractalineInInventory: inventoryFractaline.reduce(
+            (total, item) => total + item.quantity,
+            0
+          ),
+          lightFusedFractalineInInventory: lightFusedInventoryFractaline.reduce(
+            (total, item) => total + item.quantity,
+            0
+          ),
           hasCollectedTowerFractaline: hasCollectedFractaline,
         });
       } catch (e) {
