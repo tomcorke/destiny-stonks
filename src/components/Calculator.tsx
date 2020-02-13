@@ -310,6 +310,16 @@ export const Calculator = ({
           content={
             <>
               {summaryDisplay(data)}
+              {resetIndex === -2 ? (
+                <div className={STYLES.donateOrInvestChoice}>
+                  <div>{`You can donate or invest this week, without affecting your
+                    end total donated. If you reinvest your Fractaline you'll get back extra
+                    legendary items and shaders from the obelisks, but it's more
+                    clicking overall.`}</div>
+                  <div>{`It's up to you! Click "DONATE" or "INVEST"
+                    to see how your action this week affects following weeks.`}</div>
+                </div>
+              ) : null}
               <CheckPanel
                 checked={data.hasCollectedTowerFractaline}
                 onClick={() => toggleInitialHasCollectedTowerFractaline?.()}
