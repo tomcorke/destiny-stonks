@@ -42,12 +42,10 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "npm run lint:fix",
-      "git add"
+      "npm run lint:fix"
     ],
     "*.{js,css,json,md}": [
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ]
   },
   "husky": {
