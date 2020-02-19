@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import useInterval from "@use-it/interval";
 import throttle from "lodash/throttle";
 import addDays from "date-fns/addDays";
 
@@ -13,7 +14,6 @@ import {
   hasValidAuth,
   manualStartAuth,
   getSelectedDestinyMembership,
-  logOut,
   hasSelectedDestinyMembership,
   setSelectedDestinyMembership,
 } from "./services/bungie-auth";
@@ -147,7 +147,6 @@ const App = () => {
   const getPreviousReset = (date: Date) => {
     let d = date;
     const day = d.getUTCDay();
-    console.log(d.toUTCString(), day);
     if (day > 2) {
       d = addDays(d, 2 - day);
     } else {
@@ -295,7 +294,9 @@ const App = () => {
     setDonationData(undefined);
   });
 
-  const [nowDate] = useState(new Date());
+  const [nowDate, setNowDate] = useState(new Date());
+
+  useInterval(() => setNowDate(new Date()), 1000 * 60);
 
   return (
     <AppWrapper>

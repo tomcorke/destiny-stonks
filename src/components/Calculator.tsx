@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import useInterval from "@use-it/interval";
 import formatRelative from "date-fns/formatRelative";
 import addDays from "date-fns/addDays";
 import numeral from "numeral";
@@ -82,29 +81,27 @@ export const Calculator = ({
     locale,
   });
 
-  const [[timeUntil, timeUnit, timeUnits], setTimeRemaining] = useState<
-    [number, string, string]
-  >([0, "Day", "Days"]);
-  useInterval(() => {
+  const getTimeRemaining = () => {
     const weeks = weeksUntil(fromDate, lastResetDate);
     if (weeks > 0) {
-      return setTimeRemaining([weeks, "Week", "Weeks"]);
+      return [weeks, "Week", "Weeks"];
     }
     const days = daysUntil(fromDate, lastResetDate);
     if (days > 0) {
-      return setTimeRemaining([days, "Day", "Days"]);
+      return [days, "Day", "Days"];
     }
     const hours = hoursUntil(fromDate, lastResetDate);
     if (hours > 0) {
-      return setTimeRemaining([hours, "Hour", "Hours"]);
+      return [hours, "Hour", "Hours"];
     }
     const minutes = minutesUntil(fromDate, lastResetDate);
     if (minutes > 0) {
-      return setTimeRemaining([minutes, "Minute", "Minutes"]);
+      return [minutes, "Minute", "Minutes"];
     }
     const seconds = secondsUntil(fromDate, lastResetDate);
-    return setTimeRemaining([seconds, "Second", "Seconds"]);
-  }, 1000 * 60);
+    return [seconds, "Second", "Seconds"];
+  };
+  const [timeUntil, timeUnit, timeUnits] = getTimeRemaining();
 
   const resetsRemaining = getResetsUntil(fromDate, lastResetDate);
 
