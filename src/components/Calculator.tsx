@@ -32,8 +32,6 @@ const hoursUntil = (fromDate: Date, toDate: Date) =>
   Math.floor(minutesUntil(fromDate, toDate) / 60);
 const daysUntil = (fromDate: Date, toDate: Date) =>
   Math.floor(hoursUntil(fromDate, toDate) / 24);
-const weeksUntil = (fromDate: Date, toDate: Date) =>
-  Math.floor(daysUntil(fromDate, toDate) / 7);
 
 const getResetsUntil = (fromDate: Date, toDate: Date) => {
   const day = fromDate.getUTCDay();
@@ -82,10 +80,6 @@ export const Calculator = ({
   });
 
   const getTimeRemaining = () => {
-    const weeks = weeksUntil(fromDate, lastResetDate);
-    if (weeks > 0) {
-      return [weeks, "Week", "Weeks"];
-    }
     const days = daysUntil(fromDate, lastResetDate);
     if (days > 0) {
       return [days, "Day", "Days"];
@@ -95,11 +89,7 @@ export const Calculator = ({
       return [hours, "Hour", "Hours"];
     }
     const minutes = minutesUntil(fromDate, lastResetDate);
-    if (minutes > 0) {
-      return [minutes, "Minute", "Minutes"];
-    }
-    const seconds = secondsUntil(fromDate, lastResetDate);
-    return [seconds, "Second", "Seconds"];
+    return [minutes, "Minute", "Minutes"];
   };
   const [timeUntil, timeUnit, timeUnits] = getTimeRemaining();
 
