@@ -38,6 +38,7 @@ const getResetsUntil = (fromDate: Date, toDate: Date) => {
 
   const results: Date[] = [];
   let d = fromDate;
+
   if (day < 2) {
     d = addDays(d, 2 - day);
   } else {
@@ -56,6 +57,7 @@ const getResetsUntil = (fromDate: Date, toDate: Date) => {
     // Don't use addDays because it does things that are too clever with daylight savings time
     d = new Date(d.getTime() + SEVEN_DAYS);
   }
+
   return results;
 };
 
@@ -326,9 +328,7 @@ export const Calculator = ({
         action === "donate"
           ? calculateDonation(data, true)
           : calculateInvestment(data, true);
-    }
 
-    if (resetsRemaining.length > 1) {
       for (let i = 0; i < resetsRemaining.length; i++) {
         const resetStart = resetsRemaining[i];
         // const resetEnd = addDays(resetStart, 7);
